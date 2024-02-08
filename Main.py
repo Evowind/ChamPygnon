@@ -79,10 +79,15 @@ def surface(url):
         return ""
 
 
+def tostring(colors):
+    return '-'.join(str(e) for e in colors)
+
+
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
 url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 
 print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1))
-print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
+print("Champignon 2:", comestible(url2), tostring(color(url2)), shape(url2), surface(url2))
 print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
+
