@@ -33,7 +33,8 @@ def color(url):
             color_tag = soup.find('strong', string='Color:')
             if color_tag:
                 mushroom_color = [link.text.strip() for link in color_tag.find_next_siblings('a')]
-                return mushroom_color
+                # return mushroom_color
+                return '-'.join(str(e) for e in mushroom_color)
             else:
                 return []
         else:
@@ -79,8 +80,9 @@ def surface(url):
         return ""
 
 
-def tostring(colors):
-    return '-'.join(str(e) for e in colors)
+def csv(url):
+    attributes = [comestible(url), color(url), shape(url), surface(url)]
+    return ','.join(str(e) for e in attributes)
 
 
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
@@ -88,6 +90,6 @@ url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
 url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 
 print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1))
-print("Champignon 2:", comestible(url2), tostring(color(url2)), shape(url2), surface(url2))
+print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
 print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
-
+print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
