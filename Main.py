@@ -85,6 +85,39 @@ def csv(url):
     return ','.join(str(e) for e in attributes)
 
 
+def get_list(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+            all_href = soup.select('ol li p a[href]')
+            href_values = [link['href'] for link in all_href]
+            return href_values
+        else:
+            return []
+    except Exception as e:
+        print("Une erreur s'est produite :", e)
+        return []
+
+
+def scrape(url, filename):
+    url_list = get_list(url)
+    write_to_csv(url_list, filename)
+
+
+def write_to_csv(url_list, filename):
+    f = open(filename, 'w')
+    # Pour chaque lien de champignon, obtenir les caractéristiques et écrire dans le fichier CSV
+    for url in url_list:
+        f.write(csv(url))
+        f.write("\n")
+        # print(csv(url))
+
+    f.close()
+    # print("CSV file name: ", filename)
+
+
+alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
 url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
@@ -93,3 +126,4 @@ print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1)
 print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
 print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
 print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
+scrape(alphabet, "csv_test.txt")
