@@ -51,7 +51,7 @@ def shape(url):
             soup = BeautifulSoup(response.content, 'html.parser')
             color_tag = soup.find('strong', string='Shape:')
             if color_tag:
-                mushroom_shape = color_tag.find_next('a').text.strip()
+                mushroom_shape = color_tag.find_next('a').text.strip().replace("-", " ")
                 return mushroom_shape
             else:
                 return ""
@@ -69,7 +69,7 @@ def surface(url):
             soup = BeautifulSoup(response.content, 'html.parser')
             color_tag = soup.find('strong', string='Surface:')
             if color_tag:
-                mushroom_surface = color_tag.find_next('a').text.strip()
+                mushroom_surface = color_tag.find_next('a').text.strip().replace("-", " ")
                 return mushroom_surface
             else:
                 return ""
