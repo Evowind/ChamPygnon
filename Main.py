@@ -1,88 +1,111 @@
-import requests
 import pandas as pd
+import requests
 from bs4 import BeautifulSoup
 
 
 def comestible(url):
     try:
+        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
         response = requests.get(url)
+        # Vérifier si la requête a réussi
         if response.status_code == 200:
+            # Parser le contenu HTML de la page
             soup = BeautifulSoup(response.content, 'html.parser')
+            # Trouver la balise <div> avec la classe 'cat_position'
             tag = soup.find('div', class_='cat_position')
+            # Extraire le type de champignon à partir de la balise trouvée
             if tag:
                 mushroom_type = tag.find('a').text.strip()
+            # Déterminer si le champignon est comestible en fonction du type trouvé
             if "Poisonous" in mushroom_type:
-                return "P"
+                return "P"  # Champignon vénéneux
             elif "Edible" in mushroom_type:
-                return "E"
+                return "E"  # Champignon comestible
             elif "Inedible" in mushroom_type:
-                return "I"
+                return "I"  # Champignon non comestible
             else:
-                return ""
+                return ""  # Type de champignon inconnu
         else:
-            return ""
+            return ""  # La requête a échoué, pas de type de champignon
     except Exception as e:
-        print("Une erreur s'est produite :", e)
-        return ""
+        print("Une erreur s'est produite :", e)  # Afficher l'erreur
+        return ""  # Retourner une chaîne vide en cas d'erreur
 
 
 def color(url):
     try:
+        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
         response = requests.get(url)
+        # Vérifier si la requête a réussi
         if response.status_code == 200:
+            # Parser le contenu HTML de la page
             soup = BeautifulSoup(response.content, 'html.parser')
+            # Trouver la balise <strong> contenant le texte 'Color:'
             color_tag = soup.find('strong', string='Color:')
+            # Extraire la couleur du champignon à partir de la balise trouvée
             if color_tag:
                 mushroom_color = [link.text.strip() for link in color_tag.find_next_siblings('a')]
-                # Retourne la valeur mushroom_color sous forme de chaine de caractères
+                # Retourner la valeur mushroom_color sous forme de chaîne de caractères séparée par '-'
                 return '-'.join(str(e) for e in mushroom_color)
             else:
-                return []
+                return []  # Aucune couleur trouvée
         else:
-            return []
+            return []  # La requête a échoué, pas de couleur de champignon
     except Exception as e:
-        print("Une erreur s'est produite :", e)
-        return []
+        print("Une erreur s'est produite :", e)  # Afficher l'erreur
+        return []  # Retourner une liste vide en cas d'erreur
 
 
 def shape(url):
     try:
+        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
         response = requests.get(url)
+        # Vérifier si la requête a réussi
         if response.status_code == 200:
+            # Parser le contenu HTML de la page
             soup = BeautifulSoup(response.content, 'html.parser')
+            # Trouver la balise <strong> contenant le texte 'Shape:'
             color_tag = soup.find('strong', string='Shape:')
+            # Extraire la forme du champignon à partir de la balise trouvée
             if color_tag:
                 mushroom_shape = color_tag.find_next('a').text.strip().replace("-", " ")
                 return mushroom_shape
             else:
-                return ""
+                return ""  # Aucune forme trouvée
         else:
-            return ""
+            return ""  # La requête a échoué, pas de forme de champignon
     except Exception as e:
-        print("Une erreur s'est produite :", e)
-        return ""
+        print("Une erreur s'est produite :", e)  # Afficher l'erreur
+        return ""  # Retourner une chaîne vide en cas d'erreur
 
 
 def surface(url):
     try:
+        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
         response = requests.get(url)
+        # Vérifier si la requête a réussi
         if response.status_code == 200:
+            # Parser le contenu HTML de la page
             soup = BeautifulSoup(response.content, 'html.parser')
+            # Trouver la balise <strong> contenant le texte 'Surface:'
             color_tag = soup.find('strong', string='Surface:')
+            # Extraire la surface du champignon à partir de la balise trouvée
             if color_tag:
                 mushroom_surface = color_tag.find_next('a').text.strip().replace("-", " ")
                 return mushroom_surface
             else:
-                return ""
+                return ""  # Aucune surface trouvée
         else:
-            return ""
+            return ""  # La requête a échoué, pas de surface de champignon
     except Exception as e:
-        print("Une erreur s'est produite :", e)
-        return ""
+        print("Une erreur s'est produite :", e)  # Afficher l'erreur
+        return ""  # Retourner une chaîne vide en cas d'erreur
 
 
 def csv(url):
+    # Appeler les fonctions pour obtenir les attributs du champignon
     attributes = [comestible(url), color(url), shape(url), surface(url)]
+    # Retourner les attributs sous forme de chaîne CSV
     return ','.join(str(e) for e in attributes)
 
 
@@ -125,17 +148,8 @@ def write_to_csv(url_list, filename):
     # Pour chaque lien de champignon, obtenir les caractéristiques et écrire dans le fichier CSV
     for url in url_list:
         f.write(csv(url))
-        f.write("\n")
-        # print(csv(url))
-
-    f.close()
-    # print("CSV file name: ", filename)
-
-
-# Charger le fichier CSV dans un DataFrame
-champignons = pd.read_csv("champignons.csv")
-
-import pandas as pd
+        f.write("\n")  # print(csv(url))
+    f.close()  # print("CSV file name: ", filename)
 
 
 def preprocess_data(filename):
@@ -147,6 +161,8 @@ def preprocess_data(filename):
     print(champignons['Edible'].value_counts(dropna=False))
 
     # Remplacer respectivement les valeurs "E", "I" et "P" par 0, 1 et 2
+    # TODO : Enlever le no_silent_downcasting et resoudre le problème de FuturWarning
+    pd.set_option('future.no_silent_downcasting', True)
     champignons['Edible'] = champignons['Edible'].replace({'E': 0, 'I': 1, 'P': 2})
 
     # Vérifier sur quelques lignes de champignons que le résultat est bien celui attendu
@@ -154,7 +170,7 @@ def preprocess_data(filename):
     print(champignons.head())
 
     # Remplacer les valeurs manquantes par -1
-    champignons['Edible'].fillna(-1, inplace=True)
+    champignons['Edible'] = champignons['Edible'].fillna(-1)
 
     # Comparer le résultat obtenu via value_counts() avec celui obtenu dans la Question 8
     print("\nValeurs de la colonne 'Edible' après le traitement :")
@@ -162,17 +178,46 @@ def preprocess_data(filename):
 
     return champignons
 
+#TODO : Il y a une colonne en trop "Shape_shaped" je suppose.
+def create_indicator_columns(df, column_names):
+    print(f"\nNouveau DataFrame avec colonnes indicateurs : {column_names} remplacées.")
+    for column_name in column_names:
+        # Récupérer la liste de toutes les valeurs uniques dans la colonne
+        unique_values = pd.unique(df[column_name].str.split("-").explode().dropna())
+
+        # Remplacer les valeurs NaN par une chaîne vide
+        df[column_name] = df[column_name].fillna("")
+
+        # Ajouter une nouvelle colonne pour chaque valeur unique
+        for value in unique_values:
+            df[f"{column_name}_{value}"] = df[column_name].str.contains(value).astype(int)
+
+    # Supprimer les colonnes spécifiées
+    df = df.drop(column_names, axis=1)
+
+    # Afficher toutes les colonnes du DataFrame
+    pd.set_option('display.max_columns', None)
+    # Afficher les premières lignes du DataFrame pour vérifier le résultat
+    print(df.head())
+    print(df.shape)
+    return df
+
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
 url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 
-#print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1))
-#print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
-#print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
-#print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
-#scrape(alphabet, "champignons.csv")
+# print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1))
+# print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
+# print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
+# print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
+# scrape(alphabet, "champignons.csv")
 preprocess_data("champignons.csv")
 
+
+
+# 2.3 Colonnes “Shape” et “Surface”
+# Appel de la fonction pour ajouter des colonnes indicatrices pour remplacer la colonne "Shape" et la colonne "Surface"
+champignons = create_indicator_columns(pd.read_csv("champignons.csv"), ['Shape', 'Surface'])
 
