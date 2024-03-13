@@ -215,6 +215,36 @@ def get_unique_colors(df):
     return unique_colors
 
 
+import pandas as pd
+
+def create_color_dataframe():
+    # Dictionnaire des couleurs en RGB
+    color_dict = {
+        'Pale': (255, 255, 211),
+        'White': (255, 255, 255),
+        'Yellow': (255, 255, 0),
+        'Brown': (165, 42, 42),
+        'Pink': (255, 192, 203),
+        'Purple': (128, 0, 128),
+        'Tan': (210, 180, 140),
+        'Orange': (255, 165, 0),
+        'Gray': (128, 128, 128),
+        'Red': (255, 0, 0),
+        'Dark': (0, 0, 139),
+        'Green': (0, 128, 0),
+        'Blue': (0, 0, 255),
+        'Violet': (238, 130, 238),
+        'Lilac': (200, 162, 200)
+    }
+    # Créer un DataFrame à partir du dictionnaire
+    df = pd.DataFrame(list(color_dict.items()), columns=['Color', 'RGB'])
+    # Diviser la colonne 'RGB' en trois colonnes distinctes pour R, G, et B
+    df[['R', 'G', 'B']] = pd.DataFrame(df['RGB'].tolist(), index=df.index)
+    # Supprimer la colonne 'RGB' qui n'est plus nécessaire
+    df = df.drop('RGB', axis=1)
+    return df
+
+
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
@@ -235,3 +265,7 @@ champignons = create_indicator_columns(pd.read_csv("champignons.csv"), ['Shape',
 unique = get_unique_colors(champignons)
 print("Liste des couleurs individuelles présentes dans le jeu de données:", unique)
 print("Nombre de couleurs individuelles:", len(unique))
+
+# Appeler la fonction pour obtenir le DataFrame
+color_df = create_color_dataframe()
+print(color_df)
