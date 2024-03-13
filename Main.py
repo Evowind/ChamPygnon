@@ -178,7 +178,7 @@ def preprocess_data(filename):
 
     return champignons
 
-#TODO : Il y a une colonne en trop "Shape_shaped" je suppose.
+
 def create_indicator_columns(df, column_names):
     print(f"\nNouveau DataFrame avec colonnes indicateurs : {column_names} remplacées.")
     for column_name in column_names:
@@ -190,6 +190,9 @@ def create_indicator_columns(df, column_names):
 
         # Ajouter une nouvelle colonne pour chaque valeur unique
         for value in unique_values:
+            # Skip if value is 'shaped' as part of the column name
+            if value.lower() == 'shaped':
+                continue
             df[f"{column_name}_{value}"] = df[column_name].str.contains(value).astype(int)
 
     # Supprimer les colonnes spécifiées
@@ -201,6 +204,15 @@ def create_indicator_columns(df, column_names):
     print(df.head())
     print(df.shape)
     return df
+
+
+def get_unique_colors(df):
+    unique_colors = df['Color'].str.split("-").explode().dropna().unique()
+    for index, row in df.iterrows():
+        colors = row['Color']
+        if isinstance(colors, list):  # Check if colors is a list (not NaN)
+            unique_colors.update(colors)
+    return unique_colors
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
@@ -215,9 +227,11 @@ url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 # scrape(alphabet, "champignons.csv")
 preprocess_data("champignons.csv")
 
-
-
 # 2.3 Colonnes “Shape” et “Surface”
 # Appel de la fonction pour ajouter des colonnes indicatrices pour remplacer la colonne "Shape" et la colonne "Surface"
 champignons = create_indicator_columns(pd.read_csv("champignons.csv"), ['Shape', 'Surface'])
 
+# 2.4 Colonne “Color”
+unique = get_unique_colors(champignons)
+print("Liste des couleurs individuelles présentes dans le jeu de données:", unique)
+print("Nombre de couleurs individuelles:", len(unique))
