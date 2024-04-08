@@ -268,15 +268,18 @@ def create_colors_dataframe():
     return df
 
 
-# Question 16 ?
-def create_color_dataframe(champignons):
-    # Récupérer toutes les combinaisons uniques de couleurs, séparées par un tiret
-    unique_colors = champignons['Color'].str.split("-").explode().dropna().unique()
+# Question 16 TODO : Semble correct mais pas vérifier
+def create_color_combinations_dataframe(df):
+    # Supprimer les lignes avec des valeurs manquantes dans la colonne "Color"
+    df = df.dropna(subset=['Color'])
 
-    # Créer un DataFrame avec une seule colonne pour les combinaisons de couleurs uniques
-    colors = pd.DataFrame(unique_colors, columns=['Color Combination'])
+    # Séparation des combinaisons de couleurs et création d'une liste de listes de couleurs
+    color_combinations = df['Color'].str.split("-").apply(sorted).apply("-".join).unique()
 
-    return colors
+    # Création d'un DataFrame à partir de la liste de combinaisons de couleurs
+    colors_df = pd.DataFrame(color_combinations, columns=['Color Combination'])
+
+    return colors_df
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
@@ -304,6 +307,6 @@ print("Nombre de couleurs individuelles:", len(unique))
 colors_df = create_colors_dataframe()
 print(colors_df)
 
-# 16 Appeler la fonction pour obtenir le DataFrame
-color_df = create_color_dataframe(champignons)
-print(color_df)
+# 16 Appeler la fonction pour obtenir le nouveau DataFrame
+colors_dfs = create_color_combinations_dataframe(champignons)
+print(colors_dfs)
