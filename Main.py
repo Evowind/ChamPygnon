@@ -215,9 +215,7 @@ def get_unique_colors(df):
     return unique_colors
 
 
-import pandas as pd
-
-def create_color_dataframe():
+def create_colors_dataframe():
     # Dictionnaire des couleurs en RGB
     color_dict = {
         'Pale': (255, 255, 211),
@@ -238,11 +236,41 @@ def create_color_dataframe():
     }
     # Créer un DataFrame à partir du dictionnaire
     df = pd.DataFrame(list(color_dict.items()), columns=['Color', 'RGB'])
+
     # Diviser la colonne 'RGB' en trois colonnes distinctes pour R, G, et B
     df[['R', 'G', 'B']] = pd.DataFrame(df['RGB'].tolist(), index=df.index)
+
     # Supprimer la colonne 'RGB' qui n'est plus nécessaire
     df = df.drop('RGB', axis=1)
+
+    # Trouver les champignons avec deux couleurs
+    df['Num_Colors'] = df['Color'].str.count('-') + 1
+
+    # Si un champignon a deux couleurs, calculer la moyenne des valeurs R, G et B
+    for index, row in df.iterrows():
+        if row['Num_Colors'] == 2:
+            color1, color2 = row['Color'].split('-')
+            r_avg = (color_dict[color1][0] + color_dict[color2][0]) // 2
+            g_avg = (color_dict[color1][1] + color_dict[color2][1]) // 2
+            b_avg = (color_dict[color1][2] + color_dict[color2][2]) // 2
+            df.at[index, 'R'] = r_avg
+            df.at[index, 'G'] = g_avg
+            df.at[index, 'B'] = b_avg
+
+    # Supprimer la colonne 'Num_Colors' qui n'est plus nécessaire
+    df = df.drop('Num_Colors', axis=1)
+
     return df
+
+
+def create_color_dataframe(champignons):
+    # Récupérer toutes les combinaisons uniques de couleurs, séparées par un tiret
+    unique_colors = champignons['Color'].str.split("-").explode().dropna().unique()
+
+    # Créer un DataFrame avec une seule colonne pour les combinaisons de couleurs uniques
+    colors = pd.DataFrame(unique_colors, columns=['Color Combination'])
+
+    return colors
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
@@ -266,6 +294,10 @@ unique = get_unique_colors(champignons)
 print("Liste des couleurs individuelles présentes dans le jeu de données:", unique)
 print("Nombre de couleurs individuelles:", len(unique))
 
-# Appeler la fonction pour obtenir le DataFrame
-color_df = create_color_dataframe()
+# 15 Appeler la fonction pour obtenir le DataFrame
+colors_df = create_colors_dataframe()
+print(colors_df)
+
+# 16 Appeler la fonction pour obtenir le DataFrame
+color_df = create_color_dataframe(champignons)
 print(color_df)
