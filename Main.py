@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+
 # Question 1
 def comestible(url):
     try:
@@ -30,6 +31,7 @@ def comestible(url):
     except Exception as e:
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
+
 
 # Question 2
 def color(url):
@@ -79,6 +81,7 @@ def shape(url):
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
 
+
 # Question 3
 def surface(url):
     try:
@@ -102,12 +105,14 @@ def surface(url):
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
 
+
 # Question 4
 def csv(url):
     # Appeler les fonctions pour obtenir les attributs du champignon
     attributes = [comestible(url), color(url), shape(url), surface(url)]
     # Retourner les attributs sous forme de chaîne CSV
     return ','.join(str(e) for e in attributes)
+
 
 # Question 5
 def get_list(url):
@@ -123,6 +128,7 @@ def get_list(url):
     except Exception as e:
         print("Une erreur s'est produite :", e)
         return []
+
 
 # Question 5
 def scrape(url, filename):
@@ -142,6 +148,7 @@ def scrape(url, filename):
         print("Le jeu de données possède 1113 lignes et 4 attributs avec les bons noms.")
     else:
         print("Erreur: Le jeu de données ne possède pas les dimensions ou les noms de colonnes attendus.")
+
 
 # Question 5
 def write_to_csv(url_list, filename):
@@ -282,6 +289,30 @@ def create_color_combinations_dataframe(df):
     return colors_df
 
 
+# Question 17 TODO : Marche pas
+def calculate_rgb_means(colors_df):
+    # Séparer les couleurs et calculer la moyenne des valeurs RGB pour les champignons ayant deux couleurs
+    colors_df[['R', 'G', 'B']] = colors_df['Color'].str.split('-', expand=True).apply(
+        lambda x: colors_df[colors_df['Color'].isin(x)].mean(axis=0) if x[1] else colors_df[colors_df['Color'] == x[0]],
+        axis=1
+    )
+    return colors_df
+
+
+# Question 18 TODO : Marche pas
+def merge_rgb_values(champignons, colors_df):
+    # Fusionner les valeurs RGB avec le DataFrame principal
+    champignons = champignons.merge(colors_df, left_on='Color', right_on='Color', how='left')
+
+    # Supprimer la colonne 'Color'
+    champignons.drop('Color', axis=1, inplace=True)
+
+    # Attribuer des valeurs aux décompositions RGB des champignons dont le champ 'Color' contenait NA
+    champignons[['R', 'G', 'B']] = champignons[['R', 'G', 'B']].fillna(-255)
+
+    return champignons
+
+
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
@@ -308,5 +339,14 @@ colors_df = create_colors_dataframe()
 print(colors_df)
 
 # 16 Appeler la fonction pour obtenir le nouveau DataFrame
-colors_dfs = create_color_combinations_dataframe(champignons)
-print(colors_dfs)
+colors_df = create_color_combinations_dataframe(champignons)
+print(colors_df)
+
+# 17-18 Appeler la fonction pour ajouter les colonnes R, G et B
+colors_df = create_colors_dataframe()
+colors_df = calculate_rgb_means(colors_df)
+champignons = merge_rgb_values(champignons, colors_df)
+
+# Vérifier les dimensions et l'absence de NA
+print(champignons.shape)
+print(champignons.isna().sum())
