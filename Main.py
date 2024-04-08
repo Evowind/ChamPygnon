@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-
+# Question 1
 def comestible(url):
     try:
         # Effectuer une requête HTTP pour obtenir le contenu de l'URL
@@ -31,7 +31,7 @@ def comestible(url):
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
 
-
+# Question 2
 def color(url):
     try:
         # Effectuer une requête HTTP pour obtenir le contenu de l'URL
@@ -56,6 +56,7 @@ def color(url):
         return []  # Retourner une liste vide en cas d'erreur
 
 
+# Question 3
 def shape(url):
     try:
         # Effectuer une requête HTTP pour obtenir le contenu de l'URL
@@ -78,7 +79,7 @@ def shape(url):
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
 
-
+# Question 3
 def surface(url):
     try:
         # Effectuer une requête HTTP pour obtenir le contenu de l'URL
@@ -101,14 +102,14 @@ def surface(url):
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
 
-
+# Question 4
 def csv(url):
     # Appeler les fonctions pour obtenir les attributs du champignon
     attributes = [comestible(url), color(url), shape(url), surface(url)]
     # Retourner les attributs sous forme de chaîne CSV
     return ','.join(str(e) for e in attributes)
 
-
+# Question 5
 def get_list(url):
     try:
         response = requests.get(url)
@@ -123,7 +124,7 @@ def get_list(url):
         print("Une erreur s'est produite :", e)
         return []
 
-
+# Question 5
 def scrape(url, filename):
     url_list = get_list(url)
     if url_list:
@@ -142,7 +143,7 @@ def scrape(url, filename):
     else:
         print("Erreur: Le jeu de données ne possède pas les dimensions ou les noms de colonnes attendus.")
 
-
+# Question 5
 def write_to_csv(url_list, filename):
     f = open(filename, 'w')
     # Pour chaque lien de champignon, obtenir les caractéristiques et écrire dans le fichier CSV
@@ -152,6 +153,7 @@ def write_to_csv(url_list, filename):
     f.close()  # print("CSV file name: ", filename)
 
 
+# Question 8, 9, 10
 def preprocess_data(filename):
     # Charger le fichier CSV dans un DataFrame
     champignons = pd.read_csv(filename)
@@ -179,6 +181,7 @@ def preprocess_data(filename):
     return champignons
 
 
+# Question 12, 13
 def create_indicator_columns(df, column_names):
     print(f"\nNouveau DataFrame avec colonnes indicateurs : {column_names} remplacées.")
     for column_name in column_names:
@@ -206,6 +209,7 @@ def create_indicator_columns(df, column_names):
     return df
 
 
+# Question 14
 def get_unique_colors(df):
     unique_colors = df['Color'].str.split("-").explode().dropna().unique()
     for index, row in df.iterrows():
@@ -215,6 +219,7 @@ def get_unique_colors(df):
     return unique_colors
 
 
+# Question 15
 def create_colors_dataframe():
     # Dictionnaire des couleurs en RGB
     color_dict = {
@@ -263,6 +268,7 @@ def create_colors_dataframe():
     return df
 
 
+# Question 16 ?
 def create_color_dataframe(champignons):
     # Récupérer toutes les combinaisons uniques de couleurs, séparées par un tiret
     unique_colors = champignons['Color'].str.split("-").explode().dropna().unique()
