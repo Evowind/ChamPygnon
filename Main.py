@@ -285,7 +285,7 @@ def create_color_combinations_dataframe(df):
     color_combinations = df['Color'].str.split("-").apply(sorted).apply("-".join).unique()
 
     # Création d'un DataFrame à partir de la liste de combinaisons de couleurs
-    colors_df = pd.DataFrame(color_combinations, columns=['Color Combination'])
+    colors_df = pd.DataFrame(color_combinations, columns=['Color_Combination'])
 
     return colors_df
 
@@ -298,9 +298,9 @@ def calculate_rgb_means(colors_df):
     # Parcourir chaque ligne du DataFrame des combinaisons de couleurs
     for index, row in colors_df.iterrows():
         # Vérifier si la combinaison contient un tiret
-        if "-" in row['Color Combination']:
+        if "-" in row['Color_Combination']:
             # Séparer les deux couleurs de la combinaison
-            color1, color2 = row['Color Combination'].split("-")
+            color1, color2 = row['Color_Combination'].split("-")
 
             # Récupérer les valeurs RGB des deux couleurs
             r_color1, g_color1, b_color1 = color_dict[color1]
@@ -315,7 +315,7 @@ def calculate_rgb_means(colors_df):
             colors_mean = pd.concat([colors_mean, pd.DataFrame({'R': [r_mean], 'G': [g_mean], 'B': [b_mean]})], ignore_index=True)
         else:
             # Si la combinaison ne contient pas de tiret, c'est une couleur simple
-            color= row['Color Combination']
+            color= row['Color_Combination']
             r_color, g_color, b_color = color_dict[color]
             colors_mean = pd.concat([colors_mean, pd.DataFrame({'R': [r_color], 'G': [g_color], 'B': [b_color]})], ignore_index=True)
 
@@ -328,12 +328,13 @@ def calculate_rgb_means(colors_df):
 # Question 18
 def add_rgb_columns_to_champignons(data, colors_df):
     # Fusionner les DataFrames champignons et colors_df pour ajouter les colonnes R, G et B à champignons
-    data = pd.merge(data, colors_df, left_on='Color', right_on='Color Combination', how='left')
+    data = pd.merge(data, colors_df, left_on='Color', right_on='Color_Combination', how='left')
 
     # Remplacer les valeurs NaN dans les colonnes R, G et B par -255
     data[['R', 'G', 'B']] = data[['R', 'G', 'B']].fillna(-255)
 
     # Supprimer la colonne "Color" qui n'est plus nécessaire
+    data = data.drop('Color_Combination', axis=1)
     data = data.drop('Color', axis=1)
 
     return data
@@ -365,10 +366,13 @@ colors_df = create_colors_dataframe()
 print(colors_df)
 
 # 16 Appeler la fonction pour obtenir le nouveau DataFrame
-colors_df = create_color_combinations_dataframe(champignons)
-print(colors_df)
+color_combinations_df = create_color_combinations_dataframe(champignons)
+print(color_combinations_df)
 
 # 17
-colors_df = create_color_combinations_dataframe(champignons)
-merged_df = calculate_rgb_means(colors_df)
+merged_df = calculate_rgb_means(color_combinations_df)
 print(merged_df)
+
+# 18
+final_df = add_rgb_columns_to_champignons(champignons, merged_df)
+print(final_df)
