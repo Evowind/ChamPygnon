@@ -227,9 +227,8 @@ def get_unique_colors(df):
 
 
 # Question 15
-def create_colors_dataframe():
     # Dictionnaire des couleurs en RGB
-    color_dict = {
+color_dict = {
         'Pale': (255, 255, 211),
         'White': (255, 255, 255),
         'Yellow': (255, 255, 0),
@@ -246,6 +245,8 @@ def create_colors_dataframe():
         'Violet': (238, 130, 238),
         'Lilac': (200, 162, 200)
     }
+def create_colors_dataframe():
+
     # Créer un DataFrame à partir du dictionnaire
     df = pd.DataFrame(list(color_dict.items()), columns=['Color', 'RGB'])
 
@@ -289,28 +290,53 @@ def create_color_combinations_dataframe(df):
     return colors_df
 
 
-# Question 17 TODO : Marche pas
+# Question 17
 def calculate_rgb_means(colors_df):
-    # Séparer les couleurs et calculer la moyenne des valeurs RGB pour les champignons ayant deux couleurs
-    colors_df[['R', 'G', 'B']] = colors_df['Color'].str.split('-', expand=True).apply(
-        lambda x: colors_df[colors_df['Color'].isin(x)].mean(axis=0) if x[1] else colors_df[colors_df['Color'] == x[0]],
-        axis=1
-    )
-    return colors_df
+    # Création d'un DataFrame vide pour stocker les moyennes des couleurs
+    colors_mean = pd.DataFrame(columns=['R', 'G', 'B'])
+
+    # Parcourir chaque ligne du DataFrame des combinaisons de couleurs
+    for index, row in colors_df.iterrows():
+        # Vérifier si la combinaison contient un tiret
+        if "-" in row['Color Combination']:
+            # Séparer les deux couleurs de la combinaison
+            color1, color2 = row['Color Combination'].split("-")
+
+            # Récupérer les valeurs RGB des deux couleurs
+            r_color1, g_color1, b_color1 = color_dict[color1]
+            r_color2, g_color2, b_color2 = color_dict[color2]
+
+            # Calculer la moyenne des valeurs R, G et B
+            r_mean = pd.Series([r_color1, r_color2]).mean()
+            g_mean = pd.Series([g_color1, g_color2]).mean()
+            b_mean = pd.Series([b_color1, b_color2]).mean()
+
+            # Ajouter les moyennes au DataFrame des moyennes de couleurs
+            colors_mean = pd.concat([colors_mean, pd.DataFrame({'R': [r_mean], 'G': [g_mean], 'B': [b_mean]})], ignore_index=True)
+        else:
+            # Si la combinaison ne contient pas de tiret, c'est une couleur simple
+            color= row['Color Combination']
+            r_color, g_color, b_color = color_dict[color]
+            colors_mean = pd.concat([colors_mean, pd.DataFrame({'R': [r_color], 'G': [g_color], 'B': [b_color]})], ignore_index=True)
+
+    # Fusionner les DataFrames des combinaisons de couleurs et des moyennes de couleurs
+    merged_df = pd.merge(colors_df, colors_mean, left_index=True, right_index=True)
+
+    return merged_df
 
 
-# Question 18 TODO : Marche pas
-def merge_rgb_values(champignons, colors_df):
-    # Fusionner les valeurs RGB avec le DataFrame principal
-    champignons = champignons.merge(colors_df, left_on='Color', right_on='Color', how='left')
+# Question 18
+def add_rgb_columns_to_champignons(data, colors_df):
+    # Fusionner les DataFrames champignons et colors_df pour ajouter les colonnes R, G et B à champignons
+    data = pd.merge(data, colors_df, left_on='Color', right_on='Color Combination', how='left')
 
-    # Supprimer la colonne 'Color'
-    champignons.drop('Color', axis=1, inplace=True)
+    # Remplacer les valeurs NaN dans les colonnes R, G et B par -255
+    data[['R', 'G', 'B']] = data[['R', 'G', 'B']].fillna(-255)
 
-    # Attribuer des valeurs aux décompositions RGB des champignons dont le champ 'Color' contenait NA
-    champignons[['R', 'G', 'B']] = champignons[['R', 'G', 'B']].fillna(-255)
+    # Supprimer la colonne "Color" qui n'est plus nécessaire
+    data = data.drop('Color', axis=1)
 
-    return champignons
+    return data
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
@@ -342,11 +368,7 @@ print(colors_df)
 colors_df = create_color_combinations_dataframe(champignons)
 print(colors_df)
 
-# 17-18 Appeler la fonction pour ajouter les colonnes R, G et B
-colors_df = create_colors_dataframe()
-colors_df = calculate_rgb_means(colors_df)
-champignons = merge_rgb_values(champignons, colors_df)
-
-# Vérifier les dimensions et l'absence de NA
-print(champignons.shape)
-print(champignons.isna().sum())
+# 17
+colors_df = create_color_combinations_dataframe(champignons)
+merged_df = calculate_rgb_means(colors_df)
+print(merged_df)
