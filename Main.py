@@ -1,6 +1,11 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 
 # Question 1
@@ -276,7 +281,7 @@ def create_colors_dataframe():
     return df
 
 
-# Question 16 TODO : Semble correct mais pas vérifier
+# Question 16
 def create_color_combinations_dataframe(df):
     # Supprimer les lignes avec des valeurs manquantes dans la colonne "Color"
     df = df.dropna(subset=['Color'])
@@ -340,6 +345,125 @@ def add_rgb_columns_to_champignons(data, colors_df):
     return data
 
 
+# Question 19
+def split_train_test(data):
+    # Séparation des données en jeu d'entraînement et jeu de test (75%/25%)
+    train_data, test_data = train_test_split(data, test_size=0.25, random_state=42)
+    return train_data, test_data
+
+# Question 20
+def train_svc_model(train_data, test_data):
+    # Séparation des attributs et de la cible
+    X_train = train_data.drop(columns=['Edible'])
+    y_train = train_data['Edible']
+    X_test = test_data.drop(columns=['Edible'])
+    y_test = test_data['Edible']
+    print("Valeurs uniques de y_train:", y_train.unique())
+    print("Valeurs uniques de y_test:", y_test.unique())
+
+    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    X_train = X_train.astype('int')
+    y_train = y_train.astype('int')
+    X_test = X_test.astype('int')
+    y_test = y_test.astype('int')
+
+    # Création et entraînement du modèle SVC
+    svc_model = SVC()
+    svc_model.fit(X_train, y_train)
+
+    # Prédiction sur le jeu de test
+    y_pred = svc_model.predict(X_test)
+
+    # Calcul de l'accuracy_score
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Création de la matrice de confusion
+    confusion = confusion_matrix(y_test, y_pred)
+
+    return accuracy, confusion
+
+# Question 21
+def train_svc_model_with_scaling(train_data, test_data):
+    # Séparation des attributs et de la cible
+    X_train = train_data.drop(columns=['Edible'])
+    y_train = train_data['Edible']
+    X_test = test_data.drop(columns=['Edible'])
+    y_test = test_data['Edible']
+
+    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    X_train = X_train.astype('int')
+    y_train = y_train.astype('int')
+    X_test = X_test.astype('int')
+    y_test = y_test.astype('int')
+
+    # Standardisation des données
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # Création et entraînement du modèle SVC
+    svc_model = SVC()
+    svc_model.fit(X_train_scaled, y_train)
+
+    # Prédiction sur le jeu de test
+    y_pred = svc_model.predict(X_test_scaled)
+
+    # Calcul de l'accuracy_score
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Création de la matrice de confusion
+    confusion = confusion_matrix(y_test, y_pred)
+
+    return accuracy, confusion
+
+# Question 22
+def train_decision_tree_model(train_data, test_data):
+    # Séparation des attributs et de la cible
+    X_train = train_data.drop(columns=['Edible'])
+    y_train = train_data['Edible']
+    X_test = test_data.drop(columns=['Edible'])
+    y_test = test_data['Edible']
+
+    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    X_train = X_train.astype('int')
+    y_train = y_train.astype('int')
+    X_test = X_test.astype('int')
+    y_test = y_test.astype('int')
+
+
+    # Création et entraînement du modèle d'arbre de décision
+    tree_model = DecisionTreeClassifier(max_depth=3)
+    tree_model.fit(X_train, y_train)
+
+    # Prédiction sur le jeu de test
+    y_pred = tree_model.predict(X_test)
+
+    # Calcul de l'accuracy_score
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Création de la matrice de confusion
+    confusion = confusion_matrix(y_test, y_pred)
+
+    return accuracy, confusion
+
+# Question 23
+def export_decision_tree_graph(train_data, filename):
+    # Séparation des attributs et de la cible
+    X_train = train_data.drop(columns=['Edible'])
+    y_train = train_data['Edible']
+
+    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    X_train = X_train.astype('int')
+    y_train = y_train.astype('int')
+
+    # Création et entraînement du modèle d'arbre de décision avec profondeur 3
+    tree_model = DecisionTreeClassifier(max_depth=3)
+    tree_model.fit(X_train, y_train)
+
+    # Export du graph de l'arbre de décision
+    export_graphviz(tree_model, out_file=filename, feature_names=X_train.columns)
+
+
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
@@ -350,14 +474,16 @@ url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 # print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
 # print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
 # scrape(alphabet, "champignons.csv")
-preprocess_data("champignons.csv")
+
+# 9
+champignons = preprocess_data("champignons.csv")
 
 # 2.3 Colonnes “Shape” et “Surface”
 # Appel de la fonction pour ajouter des colonnes indicatrices pour remplacer la colonne "Shape" et la colonne "Surface"
-champignons = create_indicator_columns(pd.read_csv("champignons.csv"), ['Shape', 'Surface'])
+proccessed_champignons = create_indicator_columns(champignons, ['Shape', 'Surface'])
 
 # 2.4 Colonne “Color”
-unique = get_unique_colors(champignons)
+unique = get_unique_colors(proccessed_champignons)
 print("Liste des couleurs individuelles présentes dans le jeu de données:", unique)
 print("Nombre de couleurs individuelles:", len(unique))
 
@@ -366,7 +492,7 @@ colors_df = create_colors_dataframe()
 print(colors_df)
 
 # 16 Appeler la fonction pour obtenir le nouveau DataFrame
-color_combinations_df = create_color_combinations_dataframe(champignons)
+color_combinations_df = create_color_combinations_dataframe(proccessed_champignons)
 print(color_combinations_df)
 
 # 17
@@ -374,5 +500,27 @@ merged_df = calculate_rgb_means(color_combinations_df)
 print(merged_df)
 
 # 18
-final_df = add_rgb_columns_to_champignons(champignons, merged_df)
+final_df = add_rgb_columns_to_champignons(proccessed_champignons, merged_df)
 print(final_df)
+
+# Question 19
+train_data, test_data = split_train_test(final_df)
+
+
+# Question 20
+accuracy_svc, confusion_svc = train_svc_model(train_data, test_data)
+print("Accuracy Score SVC:", accuracy_svc)
+print("Confusion Matrix SVC:", confusion_svc)
+
+# Question 21
+accuracy_svc_scaled, confusion_svc_scaled = train_svc_model_with_scaling(train_data, test_data)
+print("Accuracy Score SVC with StandardScaler:", accuracy_svc_scaled)
+print("Confusion Matrix SVC with StandardScaler:", confusion_svc_scaled)
+
+# Question 22
+accuracy_tree, confusion_tree = train_decision_tree_model(train_data, test_data)
+print("Accuracy Score Decision Tree:", accuracy_tree)
+print("Confusion Matrix Decision Tree:", confusion_tree)
+
+# Question 23
+export_decision_tree_graph(train_data, "decision_tree_graph.dot")

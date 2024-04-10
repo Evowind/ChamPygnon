@@ -1,0 +1,33 @@
+digraph Tree {
+node [shape=box, fontname="helvetica"] ;
+edge [fontname="helvetica"] ;
+0 [label="Shape_CupFungi <= 0.5\ngini = 0.641\nsamples = 834\nvalue = [8.0, 360.0, 158.0, 308.0]"] ;
+1 [label="Shape_Corticioid <= 0.5\ngini = 0.633\nsamples = 778\nvalue = [8.0, 354.0, 137.0, 279.0]"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="Surface_Velvety <= 0.5\ngini = 0.631\nsamples = 760\nvalue = [8, 354, 134, 264]"] ;
+1 -> 2 ;
+3 [label="gini = 0.622\nsamples = 725\nvalue = [8.0, 347.0, 116.0, 254.0]"] ;
+2 -> 3 ;
+4 [label="gini = 0.614\nsamples = 35\nvalue = [0, 7, 18, 10]"] ;
+2 -> 4 ;
+5 [label="G <= -127.5\ngini = 0.278\nsamples = 18\nvalue = [0, 0, 3, 15]"] ;
+1 -> 5 ;
+6 [label="gini = 0.444\nsamples = 3\nvalue = [0, 0, 2, 1]"] ;
+5 -> 6 ;
+7 [label="gini = 0.124\nsamples = 15\nvalue = [0, 0, 1, 14]"] ;
+5 -> 7 ;
+8 [label="Surface_Hairy <= 0.5\ngini = 0.58\nsamples = 56\nvalue = [0.0, 6.0, 21.0, 29.0]"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label="G <= 31.5\ngini = 0.57\nsamples = 48\nvalue = [0, 6, 15, 27]"] ;
+8 -> 9 ;
+10 [label="gini = 0.633\nsamples = 16\nvalue = [0, 3, 7, 6]"] ;
+9 -> 10 ;
+11 [label="gini = 0.498\nsamples = 32\nvalue = [0, 3, 8, 21]"] ;
+9 -> 11 ;
+12 [label="B <= 21.0\ngini = 0.375\nsamples = 8\nvalue = [0, 0, 6, 2]"] ;
+8 -> 12 ;
+13 [label="gini = 0.245\nsamples = 7\nvalue = [0, 0, 6, 1]"] ;
+12 -> 13 ;
+14 [label="gini = 0.0\nsamples = 1\nvalue = [0, 0, 0, 1]"] ;
+12 -> 14 ;
+}
