@@ -6,6 +6,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
+import pickle
 
 
 # Question 1
@@ -462,6 +463,13 @@ def export_decision_tree_graph(train_data, filename):
     export_graphviz(tree_model, out_file=filename, feature_names=X_train.columns)
 
 
+# Question 24
+def save_model(model, filename):
+    with open(filename, 'wb') as file:
+        pickle.dump(model, file)
+
+
+
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
 url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
 url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
@@ -522,3 +530,7 @@ print("Confusion Matrix Decision Tree:", confusion_tree)
 
 # Question 23
 export_decision_tree_graph(train_data, "decision_tree_graph.dot")
+
+# Question 24
+save_model(train_svc_model(train_data, test_data), "svm_model.pkl")
+save_model(train_decision_tree_model(train_data, test_data), 'tree_model.pkl')
