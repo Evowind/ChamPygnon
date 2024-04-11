@@ -27,7 +27,7 @@ shapes.forEach(shape => {
     // Créer un nouveau bouton radio qui contient la valeur shape
     let radioBtn = document.createElement('shapeInput');
     radioBtn.type = 'radio';
-    radioBtn.name = 'radioShape';
+    radioBtn.name = 'shapeInput';
     radioBtn.value = shape;
 
     // Créer une étiquette pour le bouton radio
@@ -43,7 +43,7 @@ surfaceContainer.forEach(surface => {
     // Créer un nouveau bouton radio qui contient la valeur shape
     let radioBtn = document.createElement('surfaceInput');
     radioBtn.type = 'radio';
-    radioBtn.name = 'radioSurface';
+    radioBtn.name = 'surfaceInput';
     radioBtn.value = surface;
 
     // Créer une étiquette pour le bouton radio
