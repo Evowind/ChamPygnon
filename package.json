@@ -1,0 +1,23 @@
+{
+  "name": "champygnon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "champygnon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Evowind/ChamPygnon.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Evowind/ChamPygnon/issues"
+  },
+  "homepage": "https://github.com/Evowind/ChamPygnon#readme",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "express": "^4.19.2"
+  }
+}

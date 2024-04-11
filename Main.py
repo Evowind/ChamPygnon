@@ -140,7 +140,7 @@ def scrape(url, filename):
     url_list = get_list(url)
     if url_list:
         with open(filename, 'w') as f:
-            f.write("Edible,Color,Shape,Surface\n")  # Ajout de la première ligne avec les noms de colonnes
+            f.write("Edible,Color,Shape,Surfaces\n")  # Ajout de la première ligne avec les noms de colonnes
             for url in url_list:
                 f.write(csv(url))
                 f.write("\n")
@@ -149,7 +149,7 @@ def scrape(url, filename):
     champignons = pd.read_csv(filename)
 
     # Vérifier les dimensions et les noms de colonnes du DataFrame
-    if champignons.shape == (1113, 4) and list(champignons.columns) == ["Edible", "Color", "Shape", "Surface"]:
+    if champignons.shape == (1113, 4) and list(champignons.columns) == ["Edible", "Color", "Shape", "Surfaces"]:
         print("Le jeu de données possède 1113 lignes et 4 attributs avec les bons noms.")
     else:
         print("Erreur: Le jeu de données ne possède pas les dimensions ou les noms de colonnes attendus.")
@@ -175,8 +175,6 @@ def preprocess_data(filename):
     print(champignons['Edible'].value_counts(dropna=False))
 
     # Remplacer respectivement les valeurs "E", "I" et "P" par 0, 1 et 2
-    # TODO : Enlever le no_silent_downcasting et resoudre le problème de FuturWarning
-    pd.set_option('future.no_silent_downcasting', True)
     champignons['Edible'] = champignons['Edible'].replace({'E': 0, 'I': 1, 'P': 2})
 
     # Vérifier sur quelques lignes de champignons que le résultat est bien celui attendu
@@ -480,7 +478,7 @@ champignons = preprocess_data("champignons.csv")
 
 # 2.3 Colonnes “Shape” et “Surface”
 # Appel de la fonction pour ajouter des colonnes indicatrices pour remplacer la colonne "Shape" et la colonne "Surface"
-proccessed_champignons = create_indicator_columns(champignons, ['Shape', 'Surface'])
+proccessed_champignons = create_indicator_columns(champignons, ['Shape', 'Surfaces'])
 
 # 2.4 Colonne “Color”
 unique = get_unique_colors(proccessed_champignons)
