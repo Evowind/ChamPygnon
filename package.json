@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Evowind/ChamPygnon#readme",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "csv-parser": "^3.0.0",
     "ejs": "^3.1.9",
     "express": "^4.19.2"

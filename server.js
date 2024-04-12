@@ -1,9 +1,13 @@
 const express = require('express')
+const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const { exec } = require('child_process');
 
 const app = express()
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.set('view engine', 'ejs');
 const loadCSVData  = require('./champygnon');
 
@@ -32,9 +36,9 @@ app.post('/rep', async (req, res) => {
         const redValue = req.body['red-value'];
         const blueValue = req.body['blue-value'];
         const greenValue = req.body['green-value'];
+        const shape = req.body.shape;
+        const surface = req.body.surface;
         const model = req.body.selectmodel;
-        const shape = req.body.radioShape;
-        const surface = req.body.radioSurface;
 
         // Exécuter le script Python avec les données du formulaire
         exec(`python prediction.py ${model} ${redValue} ${blueValue} ${greenValue} ${shape} ${surface}`, (error, stdout, stderr) => {
@@ -51,7 +55,6 @@ app.post('/rep', async (req, res) => {
         res.status(500).send('Une erreur est survenue lors du traitement de la requête POST.');
     }
 });
-// Peut-être mettre les deux sur le meme url avec app.route('/form').get({}).post({})
 
 // Démarrer le serveur
 app.listen(3000, () => {
