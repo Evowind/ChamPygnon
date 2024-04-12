@@ -355,7 +355,7 @@ def train_svc_model_with_scaling(train_data, test_data):
     X_test = test_data.drop(columns=['Edible'])
     y_test = test_data['Edible']
 
-    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    # De base ils sont considérés comme des objets donc on ne peut pas les manipuler
     X_train = X_train.astype('int')
     y_train = y_train.astype('int')
     X_test = X_test.astype('int')
@@ -369,6 +369,10 @@ def train_svc_model_with_scaling(train_data, test_data):
     # Création et entraînement du modèle SVC
     svc_model = SVC()
     svc_model.fit(X_train_scaled, y_train)
+
+    # Sauvegarde du modèle SVC et du scaler
+    with open('svm_model.pkl', 'wb') as model_file:
+        pickle.dump(svc_model, model_file)
 
     # Prédiction sur le jeu de test
     y_pred = svc_model.predict(X_test_scaled)
@@ -389,16 +393,19 @@ def train_decision_tree_model(train_data, test_data):
     X_test = test_data.drop(columns=['Edible'])
     y_test = test_data['Edible']
 
-    # De base ils sont considere comme des objets donc on peut pas le manipuler
+    # De base ils sont considérés comme des objets donc on ne peut pas les manipuler
     X_train = X_train.astype('int')
     y_train = y_train.astype('int')
     X_test = X_test.astype('int')
     y_test = y_test.astype('int')
 
-
     # Création et entraînement du modèle d'arbre de décision
     tree_model = DecisionTreeClassifier(max_depth=3)
     tree_model.fit(X_train, y_train)
+
+    # Sauvegarde du modèle d'arbre de décision
+    with open('decision_tree_model.pkl', 'wb') as model_file:
+        pickle.dump(tree_model, model_file)
 
     # Prédiction sur le jeu de test
     y_pred = tree_model.predict(X_test)
@@ -410,6 +417,7 @@ def train_decision_tree_model(train_data, test_data):
     confusion = confusion_matrix(y_test, y_pred)
 
     return accuracy, confusion
+
 
 # Question 23
 def export_decision_tree_graph(train_data, filename):
@@ -427,13 +435,6 @@ def export_decision_tree_graph(train_data, filename):
 
     # Export du graph de l'arbre de décision
     export_graphviz(tree_model, out_file=filename, feature_names=X_train.columns)
-
-
-# Question 24
-def save_model(model, filename):
-    with open(filename, 'wb') as file:
-        pickle.dump(model, file)
-
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
@@ -491,6 +492,3 @@ print("Confusion Matrix Decision Tree:", confusion_tree)
 # Question 23
 export_decision_tree_graph(train_data, "decision_tree_graph.dot")
 
-# Question 24
-save_model(train_svc_model(train_data, test_data), "svm_model.pkl")
-save_model(train_decision_tree_model(train_data, test_data), 'tree_model.pkl')
