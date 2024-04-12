@@ -10,86 +10,62 @@ import pickle
 
 
 # Question 1
-def comestible(url):
-    try:
-        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
-        response = requests.get(url)
-        # Vérifier si la requête a réussi
-        if response.status_code == 200:
-            # Parser le contenu HTML de la page
-            soup = BeautifulSoup(response.content, 'html.parser')
-            # Trouver la balise <div> avec la classe 'cat_position'
-            tag = soup.find('div', class_='cat_position')
-            # Extraire le type de champignon à partir de la balise trouvée
-            if tag:
-                mushroom_type = tag.find('a').text.strip()
-            # Déterminer si le champignon est comestible en fonction du type trouvé
-            if "Poisonous" in mushroom_type:
-                return "P"  # Champignon vénéneux
-            elif "Edible" in mushroom_type:
-                return "E"  # Champignon comestible
-            elif "Inedible" in mushroom_type:
-                return "I"  # Champignon non comestible
-            else:
-                return ""  # Type de champignon inconnu
-        else:
-            return ""  # La requête a échoué, pas de type de champignon
-    except Exception as e:
-        print("Une erreur s'est produite :", e)  # Afficher l'erreur
-        return ""  # Retourner une chaîne vide en cas d'erreur
+def comestible(soup):
+    # Trouver la balise <div> avec la classe 'cat_position'
+    tag = soup.find('div', class_='cat_position')
+    # Extraire le type de champignon à partir de la balise trouvée
+    if tag:
+        mushroom_type = tag.find('a').text.strip()
+    # Déterminer si le champignon est comestible en fonction du type trouvé
+    if "Poisonous" in mushroom_type:
+        return "P"  # Champignon vénéneux
+    elif "Edible" in mushroom_type:
+        return "E"  # Champignon comestible
+    elif "Inedible" in mushroom_type:
+        return "I"  # Champignon non comestible
+    else:
+        return ""  # Type de champignon inconnu
 
 
 # Question 2
-def color(url):
-    try:
-        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
-        response = requests.get(url)
-        # Vérifier si la requête a réussi
-        if response.status_code == 200:
-            # Parser le contenu HTML de la page
-            soup = BeautifulSoup(response.content, 'html.parser')
-            # Trouver la balise <strong> contenant le texte 'Color:'
-            color_tag = soup.find('strong', string='Color:')
-            # Extraire la couleur du champignon à partir de la balise trouvée
-            if color_tag:
-                mushroom_color = [link.text.strip() for link in color_tag.find_next_siblings('a')]
-                # Retourner la valeur mushroom_color sous forme de chaîne de caractères séparée par '-'
-                return '-'.join(str(e) for e in mushroom_color)
-            else:
-                return []  # Aucune couleur trouvée
-        else:
-            return []  # La requête a échoué, pas de couleur de champignon
-    except Exception as e:
-        print("Une erreur s'est produite :", e)  # Afficher l'erreur
-        return []  # Retourner une liste vide en cas d'erreur
+def color(soup):
+    # Trouver la balise <strong> contenant le texte 'Color:'
+    color_tag = soup.find('strong', string='Color:')
+    # Extraire la couleur du champignon à partir de la balise trouvée
+    if color_tag:
+        mushroom_color = [link.text.strip() for link in color_tag.find_next_siblings('a')]
+        # Retourner la valeur mushroom_color sous forme de chaîne de caractères séparée par '-'
+        return '-'.join(str(e) for e in mushroom_color)
+    else:
+        return []  # Aucune couleur trouvée
 
 
 # Question 3
-def shape(url):
-    try:
-        # Effectuer une requête HTTP pour obtenir le contenu de l'URL
-        response = requests.get(url)
-        # Vérifier si la requête a réussi
-        if response.status_code == 200:
-            # Parser le contenu HTML de la page
-            soup = BeautifulSoup(response.content, 'html.parser')
-            # Trouver la balise <strong> contenant le texte 'Shape:'
-            color_tag = soup.find('strong', string='Shape:')
-            # Extraire la forme du champignon à partir de la balise trouvée
-            if color_tag:
-                mushroom_shape = color_tag.find_next('a').text.strip().replace("-", " ")
-                return mushroom_shape
-            else:
-                return ""  # Aucune forme trouvée
-        else:
-            return ""  # La requête a échoué, pas de forme de champignon
-    except Exception as e:
-        print("Une erreur s'est produite :", e)  # Afficher l'erreur
-        return ""  # Retourner une chaîne vide en cas d'erreur
+def shape(soup):
+    # Trouver la balise <strong> contenant le texte 'Shape:'
+    color_tag = soup.find('strong', string='Shape:')
+    # Extraire la forme du champignon à partir de la balise trouvée
+    if color_tag:
+        mushroom_shape = color_tag.find_next('a').text.strip().replace("-", " ")
+        return mushroom_shape
+    else:
+        return ""  # Aucune forme trouvée
 
 
 # Question 3
-def surface(url):
+def surface(soup):
+    # Trouver la balise <strong> contenant le texte 'Surface:'
+    color_tag = soup.find('strong', string='Surface:')
+    # Extraire la surface du champignon à partir de la balise trouvée
+    if color_tag:
+        mushroom_surface = color_tag.find_next('a').text.strip().replace("-", " ")
+        return mushroom_surface
+    else:
+        return ""  # Aucune surface trouvée
+
+
+# Question 4
+def csv(url):
     try:
         # Effectuer une requête HTTP pour obtenir le contenu de l'URL
         response = requests.get(url)
@@ -97,27 +73,17 @@ def surface(url):
         if response.status_code == 200:
             # Parser le contenu HTML de la page
             soup = BeautifulSoup(response.content, 'html.parser')
-            # Trouver la balise <strong> contenant le texte 'Surface:'
-            color_tag = soup.find('strong', string='Surface:')
-            # Extraire la surface du champignon à partir de la balise trouvée
-            if color_tag:
-                mushroom_surface = color_tag.find_next('a').text.strip().replace("-", " ")
-                return mushroom_surface
-            else:
-                return ""  # Aucune surface trouvée
+            # Appeler les fonctions pour obtenir les attributs du champignon
+            attributes = [comestible(soup), color(soup), shape(soup), surface(soup)]
+            #test
+            print(attributes)
+            # Retourner les attributs sous forme de chaîne CSV
+            return ','.join(str(e) for e in attributes)
         else:
             return ""  # La requête a échoué, pas de surface de champignon
     except Exception as e:
         print("Une erreur s'est produite :", e)  # Afficher l'erreur
         return ""  # Retourner une chaîne vide en cas d'erreur
-
-
-# Question 4
-def csv(url):
-    # Appeler les fonctions pour obtenir les attributs du champignon
-    attributes = [comestible(url), color(url), shape(url), surface(url)]
-    # Retourner les attributs sous forme de chaîne CSV
-    return ','.join(str(e) for e in attributes)
 
 
 # Question 5
@@ -471,13 +437,7 @@ def save_model(model, filename):
 
 
 alphabet = "https://ultimate-mushroom.com/mushroom-alphabet.html"
-url1 = "https://ultimate-mushroom.com/poisonous/103-abortiporus-biennis.html"
-url2 = "https://ultimate-mushroom.com/edible/1010-agaricus-albolutescens.html"
-url3 = "https://ultimate-mushroom.com/inedible/452-byssonectria-terrestris.html"
 
-# print("Champignon 1:", comestible(url1), color(url1), shape(url1), surface(url1))
-# print("Champignon 2:", comestible(url2), color(url2), shape(url2), surface(url2))
-# print("Champignon 3:", comestible(url3), color(url3), shape(url3), surface(url3))
 # print("Champignon 4:", csv("https://ultimate-mushroom.com/edible/946-agaricus-langei.html"))
 # scrape(alphabet, "champignons.csv")
 
