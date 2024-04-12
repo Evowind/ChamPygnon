@@ -1,35 +1,32 @@
 import sys
-import joblib
+import pickle
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
-def load_models(model_name):
-    # Charger le modèle depuis le fichier pickle
-    model_path = f"/{model_name}.pkl"
-    model = joblib.load(model_path)
-    return model
+# Récupérer les arguments passés en ligne de commande
+model_name = sys.argv[1]
+red = int(sys.argv[2])
+blue = int(sys.argv[3])
+green = int(sys.argv[4])
+shape = sys.argv[5]
+surface = sys.argv[6]
 
-def predict(model, red_value, green_value, blue_value, shape, surface):
-    # Exemple de prétraitement des caractéristiques
-    features = [red_value, green_value, blue_value, shape, surface]
+# Charger le modèle sauvegardé
+if model_name == 'svm':
+    with open('svm_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+elif model_name == 'tree':
+    with open('tree_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+else:
+    print("Modèle inconnu")
+    sys.exit(1)
 
-    # Effectuer la prédiction avec le modèle spécifié
-    prediction = model.predict([features])  # Assurez-vous que les caractéristiques sont dans le bon format pour votre modèle
+# Préparer les données d'entrée
+X_new = [[red, blue, green, shape, surface]]
 
-    return prediction
+# Faire la prédiction
+y_pred = model.predict(X_new)
 
-if __name__ == "__main__":
-    # Récupérer les arguments passés depuis le script Node.js
-    model_name = sys.argv[1]
-    red_value = float(sys.argv[2])
-    green_value = float(sys.argv[3])
-    blue_value = float(sys.argv[4])
-    shape = sys.argv[5]
-    surface = sys.argv[6]
-
-    # Charger le modèle spécifié
-    model = load_models(model_name)
-
-    # Effectuer la prédiction
-    result = predict(model, red_value, green_value, blue_value, shape, surface)
-
-    # Afficher le résultat de la prédiction
-    print(result)
+# Renvoyer la prédiction
+print(y_pred[0])

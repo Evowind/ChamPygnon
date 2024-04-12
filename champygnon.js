@@ -7,24 +7,6 @@ let champignons = [];
 let shapes = [];
 let surfaces = [];
 
-console.log("Start champygnon.js");
-
-// On récupère les informations du CSV
-/*
-fs.createReadStream(csvPath)
-  .pipe(csv())
-  .on('data', (data) => {
-      champignons.push(data);
-  })
-  .on('end', () => {
-    //console.log(champignons);
-    shapes = getShapes(champignons);
-    surfaces = getSurfaces(champignons);
-    shapes.sort();
-    surfaces.sort();
-});
-*/
-
 function loadCSVData() {
     return new Promise((resolve, reject) => {
         fs.createReadStream(csvPath)
@@ -37,7 +19,7 @@ function loadCSVData() {
                 surfaces = getSurfaces(champignons);
                 shapes.sort();
                 surfaces.sort();
-                console.log(shapes, surfaces);
+                //console.log(shapes, surfaces);
                 resolve({ shapes, surfaces });
             })
             .on('error', (error) => {
@@ -50,6 +32,7 @@ function getShapes(champignons) {
     // Créer un ensemble avec tous les shapes (pour éviter les doublons)
     const ensembleShapes = new Set(champignons.map(objet => objet.Shape));
 
+    // Convertir l'ensemble en une liste
     return [...ensembleShapes];
 }
 
@@ -61,4 +44,5 @@ function getSurfaces(champignons) {
     return [...ensembleSurfaces];
 }
 
+// Exporter les données récupérées dans le CSV
 module.exports = loadCSVData;

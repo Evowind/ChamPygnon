@@ -20,8 +20,6 @@ app.get('/', (req, res) => {
 app.get('/form', async (req, res) => {
     try {
         const { shapes, surfaces } = await loadCSVData();
-        console.log("route get: ");
-        console.log(shapes, surfaces);
         res.render('formulaire', {shapes, surfaces});
     } catch (error) {
         console.error('Error loading CSV data:', error);
