@@ -61,4 +61,4 @@ function getSurfaces(champignons) {
     return [...ensembleSurfaces];
 }
 
-module.exports = loadCSVData();
+module.exports = loadCSVData;

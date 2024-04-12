@@ -28,27 +28,33 @@
             </div>
         </div>
 
-        <div id="characteristics">
-            <label for="shapeContainer">Choose a shape:</label>
-            <div id="shapeContainer">
-                <% shapes.forEach(shape => { %>
-                  <input type="radio" name="shape" value="<%= shape %>">
-                  <label><%= shape %></label>
-                <% }); %>
-            </div>
-            <label for="surfaceContainer">Choose a surface:</label>
-            <div id="surfaceContainer">
-                <% surfaces.forEach(surface => { %>
-                  <input type="radio" name="surface" value="<%= surface %>">
-                  <label><%= surface %></label>
-                <% }); %>
-            </div>
-            <label for="selectmodel">Choose a car:</label>
-            <select id="selectmodel" name="selectmodel">
-                <option value="SVM">SVM</option>
-                <option value="Tree">Arbre de décision</option>
-            </select>
+        <br>
+
+        <label for="shapeContainer">Choose a shape:</label>
+        <div id="shapeContainer">
+            <% shapes.forEach(shape => { %>
+              <input type="radio" name="shape" value="<%= shape %>">
+              <label><%= shape %></label>
+            <% }); %>
         </div>
+
+        <br>
+
+        <label for="surfaceContainer">Choose a surface:</label>
+        <div id="surfaceContainer">
+            <% surfaces.forEach(surface => { %>
+              <input type="radio" name="surface" value="<%= surface %>">
+              <label><%= surface %></label>
+            <% }); %>
+        </div>
+
+        <br>
+
+        <label for="selectmodel">Choose a model:</label>
+        <select id="selectmodel" name="selectmodel">
+            <option value="SVM">SVM</option>
+            <option value="Tree">Arbre de décision</option>
+        </select>
 
         <div class="button">
             <button type="submit">Submit form</button>
