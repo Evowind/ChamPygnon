@@ -2,9 +2,10 @@
   "name": "champygnon",
   "version": "1.0.0",
   "description": "",
-  "main": "champygnon.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,10 @@
   "homepage": "https://github.com/Evowind/ChamPygnon#readme",
   "dependencies": {
     "csv-parser": "^3.0.0",
+    "ejs": "^3.1.9",
     "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

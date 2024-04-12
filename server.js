@@ -4,12 +4,23 @@ const { exec } = require('child_process');
 
 const app = express()
 app.use(express.json());
+app.set('view engine', 'ejs');
+const {shapes, surfaces} = require('./champygnon');
+
+// Redirect
+app.get('/', (req, res) => {
+    res.redirect('/form');
+});
 
 // Route GET à l'URL "/form"
 app.get('/form', async (req, res) => {
     try {
-        const contenuFormulaire = await fs.readFile('formulaire.html', 'utf8');
-        res.send(contenuFormulaire);
+        //const contenuFormulaire = await fs.readFile('views/formulaire.html', 'utf8');
+        //res.send(contenuFormulaire);
+        console.log("When route GET");
+        console.log(shapes);
+        console.log(surfaces);
+        res.render('formulaire', {shapes, surfaces});
     } catch (err) {
         console.error("Erreur lors de la lecture du fichier: ", err);
         res.status(500).send("Une erreur est survenue lors de la lecture du fichier.");
@@ -42,6 +53,7 @@ app.post('/rep', async (req, res) => {
         res.status(500).send('Une erreur est survenue lors du traitement de la requête POST.');
     }
 });
+// Peut-être mettre les deux sur le meme url avec app.route('/form').get({}).post({})
 
 // Démarrer le serveur
 app.listen(3000, () => {

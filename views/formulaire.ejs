@@ -1,0 +1,61 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire ChamPygnon</title>
+</head>
+
+<body>
+    <form>
+        <h1>Formulaire ChamPygnon :</h1>
+
+        <div id="color">
+            <div id="red">
+                <label for="red-value">Red color value:</label>
+                <input type="range" min="0" max="255" id="red-value" name="red-value" step="1" oninput="this.nextElementSibling.value = this.value" style="width:510px" />
+                <output>127</output>
+            </div>
+            <div id="green">
+                <label for="green-value">Green color value:</label>
+                <input type="range" min="0" max="255" id="green-value" name="blue-value" oninput="this.nextElementSibling.value = this.value" style="width:510px" />
+                <output>127</output>
+            </div>
+            <div id="blue">
+                <label for="blue-value">Blue color value:</label>
+                <input type="range" min="0" max="255" id="blue-value" name="green-value" oninput="this.nextElementSibling.value = this.value" style="width:510px" />
+                <output>127</output>
+            </div>
+        </div>
+
+        <div id="characteristics">
+            <label for="shapeContainer">Choose a shape:</label>
+            <div id="shapeContainer">
+                <% shapes.forEach(shape => { %>
+                  <input type="radio" name="shape" value="<%= shape %>">
+                  <label><%= shape %></label>
+                  <br>
+                <% }); %>
+            </div>
+            <label for="surfaceContainer">Choose a surface:</label>
+            <div id="surfaceContainer">
+                <% surfaces.forEach(surface => { %>
+                  <input type="radio" name="surface" value="<%= surface %>">
+                  <label><%= surface %></label>
+                  <br>
+                <% }); %>
+            </div>
+            <label for="selectmodel">Choose a car:</label>
+            <select id="selectmodel" name="selectmodel">
+                <option value="SVM">SVM</option>
+                <option value="Tree">Arbre de décision</option>
+            </select>
+        </div>
+
+        <div class="button">
+            <button type="submit">Submit form</button>
+        </div>
+    </form>
+
+</body>
+</html>
