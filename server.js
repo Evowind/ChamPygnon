@@ -40,7 +40,7 @@ app.post('/rep', async (req, res) => {
         const selectedModel = req.body.selectmodel;
 
         // Path to the selected model
-        const modelPath = selectedModel === 'decision_tree_model' ? 'decision_tree_model.pkl' : 'svm_model.pkl';
+        const modelPath = selectedModel === 'tree' ? 'decision_tree_model.pkl' : 'svm_model.pkl';
 
         // Exécuter le script Python avec les données du formulaire
         exec(`python prediction.py ${modelPath} ${redValue} ${blueValue} ${greenValue} ${shape} ${surface}`, (error, stdout, stderr) => {
