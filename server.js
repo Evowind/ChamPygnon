@@ -36,10 +36,13 @@ app.post('/rep', async (req, res) => {
         const greenValue = req.body['green-value'];
         const shape = req.body.shape;
         const surface = req.body.surface;
-        const model = req.body.selectmodel;
+        const selectedModel = req.body.selectmodel;
+
+        // Path to the selected model
+        const modelPath = selectedModel === 'decision_tree_model' ? 'decision_tree_model.pkl' : 'svm_model.pkl';
 
         // Exécuter le script Python avec les données du formulaire
-        exec(`python prediction.py ${model} ${redValue} ${blueValue} ${greenValue} ${shape} ${surface}`, (error, stdout, stderr) => {
+        exec(`python prediction.py ${modelPath} ${redValue} ${blueValue} ${greenValue} ${shape} ${surface}`, (error, stdout, stderr) => {
             if (error) {
                 console.error("Erreur lors de l'exécution du script Python :", error);
                 res.status(500).send("Une erreur est survenue lors de l'exécution du script Python.");
@@ -53,6 +56,8 @@ app.post('/rep', async (req, res) => {
         res.status(500).send('Une erreur est survenue lors du traitement de la requête POST.');
     }
 });
+
+
 
 // Démarrer le serveur
 app.listen(3000, () => {

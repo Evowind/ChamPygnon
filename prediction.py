@@ -1,32 +1,32 @@
 import sys
 import pickle
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
 
-# Récupérer les arguments passés en ligne de commande
-model_name = sys.argv[1]
-red = int(sys.argv[2])
-blue = int(sys.argv[3])
-green = int(sys.argv[4])
-shape = sys.argv[5]
-surface = sys.argv[6]
+def predict(model_path, features):
+    # Load the trained model
+    with open(model_path, 'rb') as model_file:
+        model = pickle.load(model_file)
 
-# Charger le modèle sauvegardé
-if model_name == 'svm':
-    with open('svm_model.pkl', 'rb') as f:
-        model = pickle.load(f)
-elif model_name == 'tree':
-    with open('tree_model.pkl', 'rb') as f:
-        model = pickle.load(f)
-else:
-    print("Modèle inconnu")
-    sys.exit(1)
+    # Prepare the features for prediction
+    redValue, blueValue, greenValue, shape, surface = features[:5]
+    # Convert categorical features to one-hot encoded format
+    shape_encoded = [1 if s == shape else 0 for s in ['Polypore', 'Convex', 'Bell', 'Depressed', 'CupFungi', 'CoralFungi', 'Conical', 'Flat', 'JellyFungi', 'Stinkhorns', 'Earthstars', 'Puffballs', 'Corticioid', 'Chanterelles', 'Funnel', 'Cylindrical', 'Knobbed', 'Shell', 'Truffles', 'Bolete', 'FalseMorels', 'ToothFungi', 'TrueMorels', 'Cauliflower']]
+    surface_encoded = [1 if s == surface else 0 for s in ['Smooth', 'FlatScales', 'Fibrous', 'Patches', 'RaisedScales', 'Hairy', 'Powder', 'Silky', 'Velvety']]
 
-# Préparer les données d'entrée
-X_new = [[red, blue, green, shape, surface]]
+    # Combine all features
+    feature_values = [float(redValue), float(blueValue), float(greenValue)] + shape_encoded + surface_encoded
 
-# Faire la prédiction
-y_pred = model.predict(X_new)
+    # Make predictions
+    predictions = model.predict([feature_values])
 
-# Renvoyer la prédiction
-print(y_pred[0])
+    return predictions[0]
+
+if __name__ == "__main__":
+    # Get the model path and features from command line arguments
+    model_path = sys.argv[1]
+    features = sys.argv[2:]
+
+    # Perform prediction
+    result = predict(model_path, features)
+
+    # Print the result
+    print(result)
