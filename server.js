@@ -5,7 +5,7 @@ const { exec } = require('child_process');
 const app = express()
 app.use(express.json());
 app.set('view engine', 'ejs');
-const {shapes, surfaces} = require('./champygnon');
+const loadCSVData  = require('./champygnon');
 
 // Redirect
 app.get('/', (req, res) => {
@@ -15,16 +15,14 @@ app.get('/', (req, res) => {
 // Route GET à l'URL "/form"
 app.get('/form', async (req, res) => {
     try {
-        //const contenuFormulaire = await fs.readFile('views/formulaire.html', 'utf8');
-        //res.send(contenuFormulaire);
-        console.log("When route GET");
-        console.log(shapes);
-        console.log(surfaces);
+        const { shapes, surfaces } = await loadCSVData();
+        console.log("route get: ");
+        console.log(shapes, surfaces);
         res.render('formulaire', {shapes, surfaces});
-    } catch (err) {
-        console.error("Erreur lors de la lecture du fichier: ", err);
-        res.status(500).send("Une erreur est survenue lors de la lecture du fichier.");
-    }
+    } catch (error) {
+        console.error('Error loading CSV data:', error);
+        res.status(500).send('Error loading CSV data');
+  }
 });
 
 // Route POST à l'URL "/rep"
