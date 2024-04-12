@@ -7,7 +7,9 @@ let champignons = [];
 let shapes = [];
 let surfaces = [];
 
+// Récupérer les données CSV
 function loadCSVData() {
+    // La fonction est asynchrone donc on renvoie une promesse
     return new Promise((resolve, reject) => {
         fs.createReadStream(csvPath)
             .pipe(csv())
@@ -17,8 +19,8 @@ function loadCSVData() {
             .on('end', () => {
                 shapes = getShapes(champignons);
                 surfaces = getSurfaces(champignons);
-                shapes.sort();
-                surfaces.sort();
+                shapes.sort().shift();
+                surfaces.sort().shift();
                 //console.log(shapes, surfaces);
                 resolve({ shapes, surfaces });
             })
@@ -28,6 +30,7 @@ function loadCSVData() {
         });
 }
 
+// Prends la liste des Objets champignons et récupère leurs shapes
 function getShapes(champignons) {
     // Créer un ensemble avec tous les shapes (pour éviter les doublons)
     const ensembleShapes = new Set(champignons.map(objet => objet.Shape));
@@ -36,6 +39,7 @@ function getShapes(champignons) {
     return [...ensembleShapes];
 }
 
+// Prends la liste des Objets champignons et récupère leurs surfaces
 function getSurfaces(champignons) {
     // Créer un ensemble avec tous les shapes (pour éviter les doublons)
     const ensembleSurfaces = new Set(champignons.map(objet => objet.Surfaces));

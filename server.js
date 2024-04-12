@@ -1,10 +1,11 @@
-const express = require('express')
-const bodyParser = require('body-parser');
+const express = require('express');
+const app = express()
+app.use(express.json());
+
 const fs = require('fs').promises;
 const { exec } = require('child_process');
 
-const app = express()
-app.use(express.json());
+const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -56,8 +57,6 @@ app.post('/rep', async (req, res) => {
         res.status(500).send('Une erreur est survenue lors du traitement de la requête POST.');
     }
 });
-
-
 
 // Démarrer le serveur
 app.listen(3000, () => {
